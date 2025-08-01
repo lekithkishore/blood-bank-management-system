@@ -1,0 +1,122 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: Arial, sans-serif;
+}
+
+body {
+  background-color: #fff5f5;
+  font-family: 'Segoe UI', sans-serif;
+  color: #2c2c2c;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 40px 20px;
+}
+
+header {
+  background: linear-gradient(90deg, #e53935, #ff5252);
+  color: white;
+  padding: 30px 20px;
+  text-align: center;
+  border-radius: 10px;
+  margin-bottom: 40px;
+}
+
+header h1 {
+  font-size: 2em;
+  margin-bottom: 10px;
+}
+
+main {
+  display: flex;
+  gap: 40px;
+  justify-content: space-between;
+}
+
+.left-panel,
+.right-panel {
+  background-color: #fff;
+  padding: 25px;
+  border-radius: 15px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);
+  border: 2px solid #ff5252;
+  width: 48%;
+}
+
+.left-panel table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+}
+
+.left-panel th,
+.left-panel td {
+  border: 1px solid #ddd;
+  padding: 10px;
+  text-align: center;
+}
+
+.right-panel form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.right-panel input,
+.right-panel button {
+  padding: 10px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+}
+
+.right-panel button {
+  background-color: #007bff;
+  color: white;
+  cursor: pointer;
+  transition: 0.3s ease;
+  font-weight: bold;
+}
+
+.right-panel button:hover {
+  background-color: #0056b3;
+}
+
+.popup {
+  position: fixed;
+  bottom: 30px;
+  right: 30px;
+  background-color: #ffe4e4;
+  color: #a00;
+  padding: 15px 20px;
+  border-left: 6px solid #a00;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+  font-weight: 500;
+  max-width: 320px;
+  z-index: 999;
+}
+
+.hidden {
+  display: none;
+}
+.back-home-btn {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  background-color: #e53935;
+  color: white;
+  padding: 8px 14px;
+  text-decoration: none;
+  border-radius: 6px;
+  font-weight: bold;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  transition: background-color 0.2s ease;
+}
+
+.back-home-btn:hover {
+  background-color: #c62828;
+}

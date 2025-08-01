@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Donor Dashboard</title>
+  <link rel="stylesheet" href="donor.css" />
+</head>
+<body>
+  <a href="index.html" class="back-home-btn">← Back to Home</a>
+  <div class="container">
+    <header>
+      <h1>Welcome Back, Donor!</h1>
+      <p>Stay updated with your donation history and upcoming donations.</p>
+    </header>
+
+    <main>
+      <div class="left-panel">
+        <h2>Donation History</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Date</th>
+              <th>Blood Bank</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody id="donationBody">
+            <tr>
+              <td colspan="3">Loading…</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="right-panel">
+        <h2>Schedule Next Donation</h2>
+        <form id="scheduleForm">
+          <label for="donation-date">Select Date:</label>
+          <input type="date" id="donation-date" name="donation-date" required />
+          <button type="submit">Schedule</button>
+          <p id="scheduleStatus" style="margin-top:8px;"></p>
+        </form>
+      </div>
+    </main>
+
+    <!-- Requests area -->
+    <section class="requests-panel" style="margin-top:20px;">
+      <h2>Requests for You</h2>
+      <div id="requestsList">Loading…</div>
+    </section>
+
+    <!-- (Popup removed) -->
+  </div>
+
+  <script src="donor.js"></script>
+</body>
+</html>

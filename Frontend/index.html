@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Dashboard | BloodLink</title>
+  <link rel="stylesheet" href="style.css">
+  <meta http-equiv="Cache-Control" content="no-store" />
+  <script src="https://unpkg.com/ionicons@5.4.0/dist/ionicons.js"></script>
+
+  <script>
+    // 🔒 Protect dashboard if not logged in
+    const isLoggedIn = sessionStorage.getItem("loggedIn");
+    if (!isLoggedIn) {
+      window.location.href = "loginpage.html";
+    }
+  </script>
+
+  <!-- Minimal popup styles -->
+  <style>
+    .popup {
+      position: fixed;
+      left: 50%;
+      bottom: 20px;
+      transform: translateX(-50%);
+      background: #ffffff;
+      color: #c62828;
+      border-radius: 10px;
+      padding: 12px 16px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+      z-index: 9999;
+      font-weight: 600;
+    }
+    .hidden { display: none; }
+  </style>
+</head>
+<body>
+  <div class="main">
+    <div class="navbar" style="color: red;">
+      <div class="icon">
+        <h2 class="logo">BloodLink</h2>
+      </div>
+      <div class="menu">
+        <ul>
+          <li><a href="donor.html">Donate</a></li>
+          <li><a href="request.html">Requests</a></li>
+          <li><a href="#" id="logoutBtn">Logout</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- 🩸 Welcome Box -->
+    <div style="
+      position: absolute;
+      top: 30%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      color: white;
+      text-align: center;
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      padding: 40px;
+      border-radius: 12px;
+      width: 80%;
+      max-width: 600px;
+    " id="userDiv">
+      <h1 style="font-size: 48px;">Welcome, <span id="welcomeName" style="color: #c62828;">User!</span></h1>
+      <p class="par" style="font-size: 20px; text-align: center;">
+        Thank you for being part of BloodLink. Together, we save lives.
+      </p>
+      <div style="margin-top: 30px;">
+        <h2>🧍‍♂️ Your Profile</h2>
+        <p><strong>Name:</strong> <span id="profileName">User</span></p>
+        <p><strong>Email:</strong> <span id="email">Not set</span></p>
+        <p><strong>Blood Group:</strong> <span id="blood">Not set</span></p>
+        <p><strong>Phone:</strong> <span id="phone">Not set</span></p>
+      </div>
+    </div>
+  </div>
+
+  <!-- 🔔 Urgent request popup -->
+  <div id="popup" class="popup hidden"></div>
+
+  <script>
+    // 🔓 Logout logic
+    document.getElementById("logoutBtn").addEventListener("click", () => {
+      sessionStorage.clear();
+      window.location.href = "loginpage.html";
+    });
+
+    // 👤 Fetch user info
+    document.addEventListener("DOMContentLoaded", async () => {
+      const email = sessionStorage.getItem("userEmail"); // ✅ key matches login script
+
+      if (!email) {
+        alert("No user email found. Redirecting to login.");
+        window.location.href = "loginpage.html";
+        return;
+      }
+
+      try {
+        const response = await fetch("http://localhost:5000/getUser", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({ email })
+        });
+
+        const data = await response.json();
+
+        if (data.success && data.data) {
+          const user = data.data;
+
+          document.getElementById("welcomeName").textContent = user.name || "User";
+          document.getElementById("profileName").textContent = user.name || "User";
+          document.getElementById("email").textContent = user.email || "Not set";
+          document.getElementById("blood").textContent = user.blood || "Not set";
+          document.getElementById("phone").textContent = user.phone || "Not set";
+
+          // (Helpful for donor page)
+          if (user.blood) {
+            sessionStorage.setItem("userBlood", user.blood);
+          }
+
+          // ✅ Show welcome only once per session
+          if (!sessionStorage.getItem("welcomeShown")) {
+            setTimeout(() => {
+              alert(`👋 Welcome back, ${user.name || "User"}!`);
+              sessionStorage.setItem("welcomeShown", "1");
+            }, 400);
+          }
+
+          // 🚨 Check for urgent alerts and show popup (ONCE per session)
+          if (!sessionStorage.getItem("bloodPopupShown")) {
+            showPopupIfNeeded(user.blood, user.email);
+          }
+
+        } else {
+          alert("⚠️ Failed to load user data.");
+        }
+      } catch (err) {
+        console.error("Error fetching user:", err);
+        alert("❌ Server error while fetching user info.");
+      }
+    });
+
+    /* ============ Popup if a new request matches donor’s blood (once per session) ============ */
+    async function showPopupIfNeeded(blood, email) {
+      const popup = document.getElementById("popup");
+      if (!popup) return;
+
+      try {
+        const qs = blood ? `?blood=${encodeURIComponent(blood)}` : "";
+        const res = await fetch(`http://localhost:5000/alerts${qs}`);
+        const data = await res.json();
+        if (!res.ok || !data.success) return;
+
+        const alerts = data.alerts || [];
+        if (!alerts.length) return;
+
+        const now = Date.now();
+        const recent = alerts.find(a => {
+          const created = a.createdAt ? new Date(a.createdAt).getTime() : 0;
+          const notResponded = !(a.responses || []).some(r => r.email === email);
+          return notResponded && now - created < 24 * 60 * 60 * 1000; // last 24 hours
+        });
+
+        if (recent) {
+          // ✅ mark as shown for THIS SESSION
+          sessionStorage.setItem("bloodPopupShown", "1");
+
+          popup.textContent = "🚨 Your blood is needed. Open your donor dashboard to see details.";
+          popup.classList.remove("hidden");
+          setTimeout(() => popup.classList.add("hidden"), 6000);
+        }
+      } catch (err) {
+        console.error("alert fetch error", err);
+      }
+    }
+  </script>
+</body>
+</html>

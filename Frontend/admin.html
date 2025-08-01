@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Admin Dashboard | BloodLink</title>
+  <link rel="stylesheet" href="admin.css" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <!-- 🔒 Protect page before paint -->
+  <script>
+    const isAdmin = sessionStorage.getItem("adminLoggedIn");
+    if (!isAdmin) {
+      window.location.href = "adminlogin.html";
+    }
+  </script>
+
+  <style>
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.45);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+    }
+    .modal {
+      background: #fff;
+      border-radius: 12px;
+      max-width: 720px;
+      width: 92%;
+      max-height: 80vh;
+      overflow: auto;
+      padding: 20px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+    }
+    .modal header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+    .modal header h3 {
+      margin: 0;
+    }
+    .modal .close-btn {
+      border: none;
+      background: #eee;
+      padding: 6px 10px;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+    .soft {
+      color: #666;
+    }
+    .btn-link {
+      border: none;
+      background: none;
+      color: #c62828;
+      cursor: pointer;
+      text-decoration: underline;
+      padding: 0;
+    }
+    .table-sm td, .table-sm th {
+      padding: 6px 8px;
+    }
+    .tab {
+      display: none;
+    }
+    .tab.active {
+      display: block;
+    }
+    .sidebar a.active {
+      font-weight: 600;
+      text-decoration: underline;
+    }
+    .btnn {
+      padding: 8px 12px;
+      border-radius: 8px;
+      border: none;
+      background: #c62828;
+      color: #fff;
+      cursor: pointer;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    th, td {
+      border-bottom: 1px solid #eee;
+      padding: 8px;
+      text-align: left;
+      vertical-align: top;
+    }
+    thead th {
+      background: #fafafa;
+    }
+  </style>
+</head>
+<body>
+  <button id="adminLogoutBtn" class="btnn" style="margin:12px;">Logout</button>
+
+  <div class="admin-container" style="display:flex;gap:16px;">
+    <aside class="sidebar" style="min-width:220px;">
+      <h2>🩸 BloodLink Admin</h2>
+      <ul style="list-style:none;padding:0;margin:0;display:grid;gap:6px;">
+        <li><a href="#" class="active" id="tab-users">Manage Users</a></li>
+        <li><a href="#" id="tab-donations">Donations</a></li>
+        <li><a href="#" id="tab-notifications">Send Alerts</a></li>
+        <li><a href="#" id="tab-requests">Requests</a></li>
+        <li><a href="#" id="tab-inventory">Inventory</a></li>
+      </ul>
+    </aside>
+
+    <main class="main-content" style="flex:1;">
+      <!-- USERS -->
+      <section id="users-section" class="tab active">
+        <h1>👥 Registered Users</h1>
+        <table id="userTable">
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Email</th>
+              <th>Blood Group</th>
+              <th>Gender</th>
+              <th>Age</th>
+              <th>Donation History</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="userTableBody">
+            <tr><td colspan="7">Loading...</td></tr>
+          </tbody>
+        </table>
+      </section>
+
+      <!-- DONATIONS -->
+      <section id="donations-section" class="tab">
+        <h1>📝 Donation History</h1>
+        <form id="createDonationForm" style="margin: 0 0 12px;">
+          <div style="display:grid;gap:8px;grid-template-columns:repeat(4,minmax(160px,1fr));max-width:100%;">
+            <input type="email" id="dn-email" placeholder="Donor Email" required>
+            <input type="date" id="dn-date" required>
+            <input type="text" id="dn-bank" placeholder="Blood Bank" required>
+            <select id="dn-status">
+              <option value="Scheduled">Scheduled</option>
+              <option value="Completed">Completed</option>
+              <option value="Cancelled">Cancelled</option>
+            </select>
+          </div>
+          <button type="submit" style="margin-top:8px;">Add Donation</button>
+          <span id="dn-status-text" style="margin-left:8px;"></span>
+        </form>
+        <table id="donationTable">
+          <thead>
+            <tr>
+              <th>Donor Name</th>
+              <th>Blood Group</th>
+              <th>Date</th>
+              <th>Status</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="donationTableBody">
+            <tr><td colspan="5">Coming soon…</td></tr>
+          </tbody>
+        </table>
+      </section>
+
+      <!-- ALERTS -->
+      <section id="notifications-section" class="tab">
+        <h1>🚨 Send Alert to Donors</h1>
+        <form id="alertForm">
+          <label for="group">Target Blood Group:</label>
+          <select id="group" name="group">
+            <option value="">All</option>
+            <option value="A+">A+</option>
+            <option value="A-">A-</option>
+            <option value="B+">B+</option>
+            <option value="B-">B-</option>
+            <option value="O+">O+</option>
+            <option value="O-">O-</option>
+            <option value="AB+">AB+</option>
+            <option value="AB-">AB-</option>
+          </select>
+          <label for="message">Alert Message:</label>
+          <textarea id="message" name="message" rows="4" required></textarea>
+          <button type="submit">Send Alert</button>
+          <p id="alertStatus" style="margin-top:10px;"></p>
+        </form>
+
+        <h2 style="margin-top:20px;">Incoming Responses</h2>
+        <table id="responsesTable">
+          <thead>
+            <tr>
+              <th>Donor Email</th>
+              <th>Status</th>
+              <th>ETA</th>
+              <th>Alert Message</th>
+              <th>Responded At</th>
+              <th>Create Donation</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="responsesBody">
+            <tr><td colspan="7">Loading…</td></tr>
+          </tbody>
+        </table>
+
+        <h2 style="margin-top:20px;">Manage Alerts</h2>
+        <table id="alertsTable" class="table-sm">
+          <thead>
+            <tr>
+              <th>Message</th>
+              <th>Target</th>
+              <th>Created</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="alertsBody">
+            <tr><td colspan="4">Loading…</td></tr>
+          </tbody>
+        </table>
+      </section>
+
+      <!-- REQUESTS -->
+      <section id="requests-section" class="tab">
+        <h1>📥 Blood Requests</h1>
+        <form id="createRequestForm" style="margin: 0 0 12px;">
+          <div style="display:grid;gap:8px;grid-template-columns:repeat(4,minmax(160px,1fr));max-width:100%;">
+            <input type="text" id="rq-name" placeholder="Requester Name" required>
+            <input type="email" id="rq-email" placeholder="Requester Email" required>
+            <input type="tel" id="rq-phone" placeholder="Phone (optional)">
+            <select id="rq-blood" required>
+              <option value="">Blood Group</option>
+              <option>A+</option><option>A-</option>
+              <option>B+</option><option>B-</option>
+              <option>O+</option><option>O-</option>
+              <option>AB+</option><option>AB-</option>
+            </select>
+            <input type="number" id="rq-units" placeholder="Units" min="1" step="1" required>
+            <input type="date" id="rq-neededBy" required>
+            <input type="text" id="rq-hospital" placeholder="Hospital/Center" required>
+            <input type="text" id="rq-location" placeholder="City/Area" required>
+          </div>
+          <textarea id="rq-notes" rows="2" placeholder="Notes (optional)" style="margin-top:8px;"></textarea>
+          <div style="display:flex;gap:8px;align-items:center;margin-top:8px;">
+            <button type="submit">Create Request</button>
+            <span id="rq-status-text"></span>
+          </div>
+        </form>
+
+        <h2 style="margin-top:18px;">Active Requests</h2>
+        <table id="requestsTable">
+          <thead>
+            <tr>
+              <th>Name / Email</th>
+              <th>Blood</th>
+              <th>Units</th>
+              <th>Needed By</th>
+              <th>Hospital / Location</th>
+              <th>Status</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="requestsTableBody">
+            <tr><td colspan="7">Loading…</td></tr>
+          </tbody>
+        </table>
+
+        <h2 style="margin-top:20px;">Request History</h2>
+        <div id="rq-history" class="soft">Loading…</div>
+        <div style="margin-top:10px;display:flex;gap:10px;">
+          <button id="rqHistoryLoadMore" class="btnn" style="display:none;">Load more</button>
+          <button class="btn-link" id="rqHistoryReload" title="Refresh">Reload</button>
+        </div>
+      </section>
+
+      <!-- ✅ INVENTORY SECTION -->
+      <section id="inventory-section" class="tab">
+        <h1>🏥 Blood Inventory</h1>
+        <form id="inventoryForm" style="margin-bottom: 16px;">
+          <div style="display:grid;gap:8px;grid-template-columns:repeat(4,minmax(160px,1fr));">
+            <select id="inv-bloodGroup" required>
+              <option value="">Blood Group</option>
+              <option>A+</option><option>A-</option>
+              <option>B+</option><option>B-</option>
+              <option>O+</option><option>O-</option>
+              <option>AB+</option><option>AB-</option>
+            </select>
+            <input type="number" id="inv-units" placeholder="Units Available" required min="1" step="1" />
+            <input type="text" id="inv-hospital" placeholder="Storage Location" required />
+            <input type="date" id="inv-date" required />
+          </div>
+          <div style="margin-top:8px;">
+            <button type="submit">Add to Inventory</button>
+            <span id="inv-status-text" style="margin-left:10px;"></span>
+          </div>
+        </form>
+
+        <h2>Current Inventory</h2>
+        <table id="inventoryTable">
+          <thead>
+            <tr>
+              <th>Blood Group</th>
+              <th>Units</th>
+              <th>Location</th>
+              <th>Date Added</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="inventoryBody">
+            <tr><td colspan="5">Loading…</td></tr>
+          </tbody>
+        </table>
+      </section>
+    </main>
+  </div>
+
+  <!-- History Modal -->
+  <div id="historyModal" class="modal-backdrop" role="dialog" aria-modal="true" aria-hidden="true">
+    <div class="modal">
+      <header>
+        <h3 id="historyTitle">Donation History</h3>
+        <button class="close-btn" id="historyClose">Close</button>
+      </header>
+      <div id="historyList" class="soft">Loading…</div>
+      <div style="margin-top:10px;display:flex;gap:10px;">
+        <button id="historyLoadMore" class="btnn" style="display:none;">Load more</button>
+        <button class="btn-link" id="historyReload" title="Refresh">Refresh</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tab Switching + Logout -->
+  <script>
+    const tabs = document.querySelectorAll(".sidebar a");
+    const sections = document.querySelectorAll(".tab");
+    tabs.forEach(tab => {
+      tab.addEventListener("click", e => {
+        e.preventDefault();
+        tabs.forEach(t => t.classList.remove("active"));
+        tab.classList.add("active");
+        sections.forEach(s => s.classList.remove("active"));
+        const id = tab.id.replace("tab-", "") + "-section";
+        document.getElementById(id).classList.add("active");
+      });
+    });
+
+    const adminLogoutBtn = document.getElementById("adminLogoutBtn");
+    if (adminLogoutBtn) {
+      adminLogoutBtn.addEventListener("click", () => {
+        sessionStorage.removeItem("adminLoggedIn");
+        sessionStorage.removeItem("adminEmail");
+        window.location.href = "adminlogin.html";
+      });
+    }
+  </script>
+
+  <script src="admin.js"></script>
+</body>
+</html>
