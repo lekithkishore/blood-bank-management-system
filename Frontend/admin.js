@@ -28,7 +28,7 @@ let __usersByEmail = new Map();
 async function fetchAllUsers() {
   const tableBody = document.getElementById("userTableBody");
   try {
-    const res = await fetch("http://localhost:5000/admin/users");
+    const res = await fetch("https://blood-bank-management-system-u2p7.onrender.com/admin/users");
     const data = await res.json();
 
     if (!res.ok || !data.success) {
@@ -89,7 +89,7 @@ async function fetchAllUsers() {
 
 async function onEditUser(userId) {
   try {
-    const res = await fetch("http://localhost:5000/admin/users");
+    const res = await fetch("https://blood-bank-management-system-u2p7.onrender.com/admin/users");
     const data = await res.json();
     if (!res.ok || !data.success) {
       return alert("Failed to load current user.");
@@ -105,7 +105,7 @@ async function onEditUser(userId) {
 
     const payload = { name, blood, gender, age };
 
-    const pres = await fetch(`http://localhost:5000/admin/users/${userId}`, {
+    const pres = await fetch(`https://blood-bank-management-system-u2p7.onrender.com/admin/users/${userId}`, {
       method: "PATCH",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(payload)
@@ -127,7 +127,7 @@ async function onEditUser(userId) {
 async function onDeleteUser(userId) {
   if (!confirm("Delete this user? This cannot be undone.")) return;
   try {
-    const dres = await fetch(`http://localhost:5000/admin/users/${userId}`, {
+    const dres = await fetch(`https://blood-bank-management-system-u2p7.onrender.com/admin/users/${userId}`, {
       method: "DELETE"
     });
     const ddata = await dres.json();
@@ -160,7 +160,7 @@ function setupAlertForm() {
     }
 
     try {
-      const res = await fetch("http://localhost:5000/admin/alert", {
+      const res = await fetch("https://blood-bank-management-system-u2p7.onrender.com/admin/alert", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ message, group })
@@ -188,7 +188,7 @@ function setupAlertForm() {
 async function loadAllDonations() {
   const body = document.getElementById("donationTableBody");
   try {
-    const res = await fetch("http://localhost:5000/admin/donations");
+    const res = await fetch("https://blood-bank-management-system-u2p7.onrender.com/admin/donations");
     const data = await res.json();
 
     if (!res.ok || !data.success) {
@@ -227,7 +227,7 @@ async function loadAllDonations() {
         if (!id) return;
         if (!confirm("Delete this donation record?")) return;
         try {
-          const res = await fetch(`http://localhost:5000/admin/donations/${id}`, { method: "DELETE" });
+          const res = await fetch(`https://blood-bank-management-system-u2p7.onrender.com/admin/donations/${id}`, { method: "DELETE" });
           const data = await res.json();
           if (res.ok && data.success) {
             await loadAllDonations();
@@ -270,7 +270,7 @@ function setupCreateDonationForm() {
     }
 
     try {
-      const res = await fetch("http://localhost:5000/admin/donations", {
+      const res = await fetch("https://blood-bank-management-system-u2p7.onrender.com/admin/donations", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, date, bloodBank: bank, status })
@@ -297,7 +297,7 @@ function setupCreateDonationForm() {
 async function loadResponses() {
   const body = document.getElementById("responsesBody");
   try {
-    const res = await fetch("http://localhost:5000/alerts");
+    const res = await fetch("https://blood-bank-management-system-u2p7.onrender.com/alerts");
     const data = await res.json();
 
     if (!res.ok || !data.success) {
@@ -380,7 +380,7 @@ async function loadResponses() {
         const respondedAt = btn.getAttribute("data-responded"); // optional
         if (!confirm("Delete this response?")) return;
         try {
-          const res = await fetch(`http://localhost:5000/admin/alerts/${alertId}/responses`, {
+          const res = await fetch(`https://blood-bank-management-system-u2p7.onrender.com/admin/alerts/${alertId}/responses`, {
             method: "DELETE",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ email, respondedAt })
@@ -407,7 +407,7 @@ async function loadResponses() {
 
 async function createDonationFromResponse(email, date, bloodBank) {
   try {
-    const res = await fetch("http://localhost:5000/admin/donations", {
+    const res = await fetch("https://blood-bank-management-system-u2p7.onrender.com/admin/donations", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ email, date, bloodBank, status: "Scheduled" })
@@ -429,7 +429,7 @@ async function createDonationFromResponse(email, date, bloodBank) {
 async function loadAlertsList() {
   const body = document.getElementById("alertsBody");
   try {
-    const res = await fetch("http://localhost:5000/alerts");
+    const res = await fetch("https://blood-bank-management-system-u2p7.onrender.com/alerts");
     const data = await res.json();
 
     if (!res.ok || !data.success) {
@@ -466,7 +466,7 @@ async function loadAlertsList() {
         if (!id) return;
         if (!confirm("Delete this alert?")) return;
         try {
-          const res = await fetch(`http://localhost:5000/admin/alerts/${id}`, { method: "DELETE" });
+          const res = await fetch(`https://blood-bank-management-system-u2p7.onrender.com/admin/alerts/${id}`, { method: "DELETE" });
           const data = await res.json();
           if (res.ok && data.success) {
             await loadAlertsList();
@@ -530,7 +530,7 @@ async function fetchHistory(email, name, reset=false){
   loadMore.style.display = "none";
 
   try {
-    const res = await fetch(`http://localhost:5000/donations/${encodeURIComponent(email)}`);
+    const res = await fetch(`https://blood-bank-management-system-u2p7.onrender.com/donations/${encodeURIComponent(email)}`);
     const data = await res.json();
 
     if (!res.ok || !data.success) {
@@ -623,7 +623,7 @@ function setupCreateRequestForm() {
     }
 
     try {
-      const res = await fetch("http://localhost:5000/admin/requests", {
+      const res = await fetch("http://localhost:5000https://blood-bank-management-system-u2p7.onrender.com/admin/requests", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload)
@@ -653,7 +653,7 @@ async function loadActiveRequests() {
   body.innerHTML = "<tr><td colspan='7'>Loading…</td></tr>";
   try {
     // Only pending items
-    const res = await fetch("http://localhost:5000/admin/requests?status=Pending");
+    const res = await fetch("https://blood-bank-management-system-u2p7.onrender.com/admin/requests?status=Pending");
     const data = await res.json();
     if (!res.ok || !data.success) {
       body.innerHTML = "<tr><td colspan='7'>Failed to load requests</td></tr>";
@@ -751,7 +751,7 @@ async function fetchMoreRequestHistory(){
   if (exhausted) return;
 
   try {
-    const res = await fetch(`http://localhost:5000/admin/requests/history?skip=${shown}&limit=${pageSize}`);
+    const res = await fetch(`https://blood-bank-management-system-u2p7.onrender.com/admin/requests/history?skip=${shown}&limit=${pageSize}`);
     const data = await res.json();
     if (!res.ok || !data.success) {
       document.getElementById("rq-history").textContent = "Failed to load history.";
@@ -822,7 +822,7 @@ function renderMoreRequestHistory(){
 async function acceptRequest(id) {
   try {
     // 1) Mark accepted (server returns updated request)
-    let res = await fetch(`http://localhost:5000/admin/requests/${id}/accept`, { method: "PATCH" });
+    let res = await fetch(`https://blood-bank-management-system-u2p7.onrender.com/admin/requests/${id}/accept`, { method: "PATCH" });
     let data = await res.json();
     if (!res.ok || !data.success) {
       alert(data.message || "Failed to accept request");
@@ -832,7 +832,7 @@ async function acceptRequest(id) {
 
     // 2) Notify donors of same blood group using existing alerts endpoint
     const message = buildRequestAlertMessage(req);
-    res = await fetch("http://localhost:5000/admin/alert", {
+    res = await fetch("https://blood-bank-management-system-u2p7.onrender.com/admin/alert", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ message, group: req.blood })
@@ -869,7 +869,7 @@ function buildRequestAlertMessage(req) {
 
 async function updateRequestStatus(id, status) {
   try {
-    const res = await fetch(`http://localhost:5000/admin/requests/${id}`, {
+    const res = await fetch(`https://blood-bank-management-system-u2p7.onrender.com/admin/requests/${id}`, {
       method: "PATCH",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ status })
@@ -890,7 +890,7 @@ async function updateRequestStatus(id, status) {
 
 async function deleteRequest(id) {
   try {
-    const res = await fetch(`http://localhost:5000/admin/requests/${id}`, { method: "DELETE" });
+    const res = await fetch(`https://blood-bank-management-system-u2p7.onrender.com/admin/requests/${id}`, { method: "DELETE" });
     const data = await res.json();
     if (res.ok && data.success) {
       alert("🗑️ Request deleted");
@@ -946,7 +946,7 @@ function setupInventory() {
       return;
     }
     try {
-      const res = await fetch("http://localhost:5000/admin/inventory", {
+      const res = await fetch("https://blood-bank-management-system-u2p7.onrender.com/admin/inventory", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ hospital, bloodGroup, units, dateAdded })
@@ -974,7 +974,7 @@ async function fetchInventory() {
   if (!tbody) return;
   tbody.innerHTML = "<tr><td colspan='5'>Loading…</td></tr>";
   try {
-    const res = await fetch("http://localhost:5000/admin/inventory");
+    const res = await fetch("https://blood-bank-management-system-u2p7.onrender.com/admin/inventory");
     const data = await res.json();
     if (!res.ok || !data.success) {
       tbody.innerHTML = "<tr><td colspan='5'>Failed to load inventory</td></tr>";
@@ -1015,7 +1015,7 @@ const addedAt = prompt("Edit Date (MM/DD/YYYY):", cells[3].innerText);
 
     if (!hospital || !bloodGroup || !units) return;
 
-    const response = await fetch(`http://localhost:5000/api/inventory/${id}`, {
+    const response = await fetch(`https://blood-bank-management-system-u2p7.onrender.com/api/inventory/${id}`, {
   method: "PUT",
   headers: { "Content-Type": "application/json" },
 body: JSON.stringify({ hospital, bloodGroup, units, addedAt })
@@ -1036,7 +1036,7 @@ body: JSON.stringify({ hospital, bloodGroup, units, addedAt })
         const id = btn.getAttribute("data-id");
         if (!id || !confirm("Delete this inventory record?")) return;
         try {
-          const dres = await fetch(`http://localhost:5000/admin/inventory/${id}`, { method: "DELETE" });
+          const dres = await fetch(`https://blood-bank-management-system-u2p7.onrender.com/admin/inventory/${id}`, { method: "DELETE" });
           const j = await dres.json();
           if (dres.ok && j.success) {
             alert("🗑️ Inventory deleted");
