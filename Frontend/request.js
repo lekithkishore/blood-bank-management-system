@@ -75,7 +75,7 @@ document.addEventListener("DOMContentLoaded", () => {
     setInfo("Submitting request…");
 
     try {
-      const res = await fetch("http://localhost:5000/admin/requests", {
+      const res = await fetch("https://blood-bank-management-system-u2p7.onrender.com/admin/requests", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload)
