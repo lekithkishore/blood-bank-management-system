@@ -36,7 +36,7 @@ function saveDismissedSet(set) {
 async function loadDonationHistory(email) {
   const body = document.getElementById("donationBody");
   try {
-    const res = await fetch(`http://localhost:5000/donations/${encodeURIComponent(email)}`);
+    const res = await fetch(`https://blood-bank-management-system-u2p7.onrender.com/donations/${encodeURIComponent(email)}`);
     const data = await res.json();
 
     if (!res.ok || !data.success) {
@@ -73,7 +73,7 @@ async function loadRequests(blood, email) {
 
   try {
     const qs = blood ? `?blood=${encodeURIComponent(blood)}` : "";
-    const res = await fetch(`http://localhost:5000/alerts${qs}`);
+    const res = await fetch(`https://blood-bank-management-system-u2p7.onrender.com/alerts${qs}`);
     const data = await res.json();
     if (!res.ok || !data.success) {
       wrap.textContent = "Failed to load requests.";
@@ -226,7 +226,7 @@ function setupScheduleForm(email) {
     status.textContent = "Saving…";
 
     try {
-      const res = await fetch("http://localhost:5000/admin/donations", {
+      const res = await fetch("https://blood-bank-management-system-u2p7.onrender.com/admin/donations", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, date, bloodBank: bank.trim(), status: "Scheduled" })
